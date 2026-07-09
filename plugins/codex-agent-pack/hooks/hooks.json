@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'root=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; bash \"$root/.codex/hooks/codex-user-prompt-hook.sh\"'",
+            "commandWindows": "\"C:\\Program Files\\Git\\usr\\bin\\bash.exe\" -lc 'root=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; bash \"$root/.codex/hooks/codex-user-prompt-hook.sh\"'",
+            "timeout": 10,
+            "statusMessage": "Recording Codex prompt context"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'root=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; bash \"$root/.codex/hooks/codex-stop-hook.sh\"'",
+            "commandWindows": "\"C:\\Program Files\\Git\\usr\\bin\\bash.exe\" -lc 'root=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; bash \"$root/.codex/hooks/codex-stop-hook.sh\"'",
+            "timeout": 30,
+            "statusMessage": "Recording Codex session update"
+          }
+        ]
+      }
+    ]
+  }
+}

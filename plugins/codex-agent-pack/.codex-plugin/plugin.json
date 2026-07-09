@@ -1,0 +1,36 @@
+{
+  "name": "codex-agent-pack",
+  "version": "0.1.0",
+  "description": "Codex-native skills, custom-agent sync scripts, hooks, and project setup workflows.",
+  "author": {
+    "name": "Chuck Player",
+    "url": "https://github.com/chuckplayer"
+  },
+  "homepage": "https://github.com/chuckplayer/codex-agent-pack",
+  "repository": "https://github.com/chuckplayer/codex-agent-pack",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "skills",
+    "agents",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex Agent Pack",
+    "shortDescription": "Reusable Codex skills plus scripts for custom agents and project setup.",
+    "longDescription": "A Codex-native workflow pack with skills, custom-agent TOML files, lifecycle hook assets, and setup scripts. Custom agents and global hooks are installed with the bundled sync script after plugin install.",
+    "developerName": "Chuck Player",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Skills",
+      "Scripts",
+      "Project setup"
+    ],
+    "defaultPrompt": [
+      "Run system-check for this Codex pack.",
+      "Sync the Codex Agent Pack custom agents.",
+      "Set up this repo for the Codex Agent Pack."
+    ]
+  }
+}

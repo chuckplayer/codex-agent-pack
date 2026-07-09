@@ -1,0 +1,20 @@
+{
+  "name": "codex-agent-pack-local",
+  "interface": {
+    "displayName": "Codex Agent Pack Local"
+  },
+  "plugins": [
+    {
+      "name": "codex-agent-pack",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex-agent-pack"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

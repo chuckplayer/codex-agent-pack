@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'pack=\"${CODEX_AGENT_PACK_HOME:-${CODEX_HOME:-$HOME/.codex}/agent-pack}\"; bash \"$pack/hooks/codex-user-prompt-hook.sh\"'",
+            "commandWindows": "\"C:\\Program Files\\Git\\usr\\bin\\bash.exe\" -lc 'pack=\"${CODEX_AGENT_PACK_HOME:-${CODEX_HOME:-$HOME/.codex}/agent-pack}\"; bash \"$pack/hooks/codex-user-prompt-hook.sh\"'",
+            "timeout": 10,
+            "statusMessage": "Recording Codex prompt context"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'pack=\"${CODEX_AGENT_PACK_HOME:-${CODEX_HOME:-$HOME/.codex}/agent-pack}\"; bash \"$pack/hooks/codex-stop-hook.sh\"'",
+            "commandWindows": "\"C:\\Program Files\\Git\\usr\\bin\\bash.exe\" -lc 'pack=\"${CODEX_AGENT_PACK_HOME:-${CODEX_HOME:-$HOME/.codex}/agent-pack}\"; bash \"$pack/hooks/codex-stop-hook.sh\"'",
+            "timeout": 30,
+            "statusMessage": "Recording Codex session update"
+          }
+        ]
+      }
+    ]
+  }
+}
