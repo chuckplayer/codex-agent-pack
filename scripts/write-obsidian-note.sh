@@ -12,7 +12,14 @@ USAGE
 
 mode="capture"
 vault_path="${CODEX_OBSIDIAN_VAULT_PATH:-${OBSIDIAN_VAULT_PATH:-}}"
-projects_folder="${CODEX_OBSIDIAN_PROJECTS_FOLDER:-Codex/Projects}"
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" 2>/dev/null && pwd -P)"
+if [[ -n "$script_dir" && -f "$script_dir/obsidian-config.sh" ]]; then
+  # shellcheck source=scripts/obsidian-config.sh
+  source "$script_dir/obsidian-config.sh"
+  codex_agent_pack_load_obsidian_config "$script_dir/../obsidian.env" >/dev/null 2>&1 || true
+fi
+vault_path="${CODEX_OBSIDIAN_VAULT_PATH:-${OBSIDIAN_VAULT_PATH:-}}"
+projects_folder="${CODEX_OBSIDIAN_PROJECTS_FOLDER:-${OBSIDIAN_PROJECTS_FOLDER:-Codex/Projects}}"
 project="$(basename "$PWD")"
 title=""
 body=""

@@ -7,7 +7,7 @@ description: "Create or update a daily Codex project note in Obsidian using conf
 
 Use this for a daily project note or index entry.
 
-Resolve the vault with `CODEX_OBSIDIAN_VAULT_PATH`, then `OBSIDIAN_VAULT_PATH`. Resolve the project folder with `CODEX_OBSIDIAN_PROJECTS_FOLDER`, defaulting to `Codex/Projects`.
+Resolve the vault from the Codex Agent Pack `obsidian.env` config when available, then `CODEX_OBSIDIAN_VAULT_PATH`, then `OBSIDIAN_VAULT_PATH`. Resolve the project folder with `CODEX_OBSIDIAN_PROJECTS_FOLDER`, then `OBSIDIAN_PROJECTS_FOLDER`, defaulting to `Codex/Projects`.
 
 For capture or recap entries, prefer:
 - `obsidian-capture` for short notes,

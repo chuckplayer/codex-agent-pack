@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'USAGE'
-Usage: bash scripts/install-codex-agent-pack.sh [--force] [--hooks] [--codex-home PATH] [--skills-home PATH] [--agent-pack-home PATH]
+Usage: bash scripts/install-codex-agent-pack.sh [--force] [--hooks] [--codex-home PATH] [--skills-home PATH] [--agent-pack-home PATH] [--obsidian-vault PATH] [--obsidian-projects-folder PATH] [--import-claude-obsidian]
 
 Installs this pack for the current user:
 - skills -> $HOME/.agents/skills
@@ -14,6 +14,9 @@ Installs this pack for the current user:
 Use --force to replace existing installed files.
 Use --hooks to install the global hooks.json. This refuses to replace an
 existing hooks.json unless --force is also supplied.
+Use --obsidian-vault to configure best-effort Obsidian autologging for hooks.
+Use --import-claude-obsidian to read OBSIDIAN_VAULT_PATH and
+OBSIDIAN_PROJECTS_FOLDER from ~/.claude/settings.json.
 USAGE
 }
 
@@ -22,6 +25,9 @@ install_hooks=0
 codex_home="${CODEX_HOME:-$HOME/.codex}"
 skills_home="${CODEX_GLOBAL_SKILLS_HOME:-$HOME/.agents/skills}"
 agent_pack_home="${CODEX_AGENT_PACK_HOME:-}"
+obsidian_vault=""
+obsidian_projects_folder=""
+import_claude_obsidian=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -45,6 +51,18 @@ while [[ $# -gt 0 ]]; do
       agent_pack_home="${2:?Missing value for --agent-pack-home}"
       shift 2
       ;;
+    --obsidian-vault)
+      obsidian_vault="${2:?Missing value for --obsidian-vault}"
+      shift 2
+      ;;
+    --obsidian-projects-folder)
+      obsidian_projects_folder="${2:?Missing value for --obsidian-projects-folder}"
+      shift 2
+      ;;
+    --import-claude-obsidian)
+      import_claude_obsidian=1
+      shift
+      ;;
     -h|--help)
       usage
       exit 0
@@ -63,6 +81,12 @@ fi
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 pack_root="$(cd "$script_dir/.." && pwd -P)"
+
+obsidian_config_helper="$pack_root/scripts/obsidian-config.sh"
+if [[ -f "$obsidian_config_helper" ]]; then
+  # shellcheck source=scripts/obsidian-config.sh
+  source "$obsidian_config_helper"
+fi
 
 first_existing_dir() {
   local candidate
@@ -149,6 +173,32 @@ copy_dir_children "$agents_source" "$codex_home/agents"
 mkdir -p "$agent_pack_home/hooks"
 copy_dir_children "$hook_scripts_source" "$agent_pack_home/hooks"
 
+obsidian_configured=0
+if [[ "$import_claude_obsidian" -eq 1 ]]; then
+  if ! declare -F codex_agent_pack_read_claude_obsidian_config >/dev/null; then
+    echo "[!!] cannot import Claude Obsidian config: missing scripts/obsidian-config.sh" >&2
+    exit 1
+  fi
+  if [[ -z "$obsidian_vault" ]]; then
+    obsidian_vault="$(codex_agent_pack_read_claude_obsidian_config OBSIDIAN_VAULT_PATH || true)"
+  fi
+  if [[ -z "$obsidian_projects_folder" ]]; then
+    obsidian_projects_folder="$(codex_agent_pack_read_claude_obsidian_config OBSIDIAN_PROJECTS_FOLDER || true)"
+  fi
+fi
+
+if [[ -n "$obsidian_vault" ]]; then
+  if ! declare -F codex_agent_pack_write_obsidian_config >/dev/null; then
+    echo "[!!] cannot write Obsidian config: missing scripts/obsidian-config.sh" >&2
+    exit 1
+  fi
+  codex_agent_pack_write_obsidian_config "$agent_pack_home/obsidian.env" "$obsidian_vault" "${obsidian_projects_folder:-Codex/Projects}"
+  echo "[ok] obsidian config: $agent_pack_home/obsidian.env"
+  obsidian_configured=1
+elif [[ "$import_claude_obsidian" -eq 1 ]]; then
+  echo "[--] Claude Obsidian config not found; Obsidian autologging not configured."
+fi
+
 if [[ "$install_hooks" -eq 1 ]]; then
   hooks_destination="$codex_home/hooks.json"
   if [[ -e "$hooks_destination" && "$force" -ne 1 ]]; then
@@ -166,6 +216,7 @@ Skills:        $skills_home
 Custom agents: $codex_home/agents
 Support copy:  $agent_pack_home
 Hooks:         $(if [[ "$install_hooks" -eq 1 ]]; then echo "$codex_home/hooks.json"; else echo "not installed"; fi)
+Obsidian:      $(if [[ "$obsidian_configured" -eq 1 ]]; then echo "$agent_pack_home/obsidian.env"; else echo "not configured"; fi)
 
 Restart Codex or start a new session so it reloads global skills and agents.
 EOF

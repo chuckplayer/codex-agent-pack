@@ -7,7 +7,7 @@ description: "Create a read-only brief from configured Codex Obsidian notes for 
 
 Use this skill to synthesize existing notes without writing new ones.
 
-1. Resolve the vault with `CODEX_OBSIDIAN_VAULT_PATH`, then `OBSIDIAN_VAULT_PATH`.
+1. Resolve the vault from Codex Agent Pack `obsidian.env` when available, then `CODEX_OBSIDIAN_VAULT_PATH`, then `OBSIDIAN_VAULT_PATH`.
 2. Search `Codex/captures`, `Codex/Projects/<project-slug>`, and the configured projects folder.
 3. Read only notes relevant to the requested project, topic, date, or decision.
 4. Produce a brief with:

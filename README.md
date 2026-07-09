@@ -53,6 +53,20 @@ This performs the full hybrid install:
 Start a new Codex session after installing so the plugin skills and custom
 agents are reloaded.
 
+To enable Obsidian autologging using an existing Claude Code Obsidian setup:
+
+```bash
+bash scripts/install-codex-plugin.sh --hooks --import-claude-obsidian
+```
+
+Or configure the Codex pack directly:
+
+```bash
+bash scripts/install-codex-plugin.sh --hooks \
+  --obsidian-vault "/absolute/path/to/your/vault" \
+  --obsidian-projects-folder "Codex/Projects"
+```
+
 ## Preview Install Commands
 
 Use `--dry-run` to inspect what the installer will execute without changing
@@ -105,6 +119,12 @@ Common options:
 - `--dry-run`: print commands without running them.
 - `--codex-bin <path>`: use a specific Codex CLI executable.
 - `--codex-home <path>`: sync agents and hooks to a non-default Codex home.
+- `--obsidian-vault <path>`: configure Obsidian autologging for installed
+  hooks.
+- `--obsidian-projects-folder <path>`: set the vault-relative project folder
+  for Obsidian notes. Default is `Codex/Projects`.
+- `--import-claude-obsidian`: import `OBSIDIAN_VAULT_PATH` and
+  `OBSIDIAN_PROJECTS_FOLDER` from `~/.claude/settings.json`.
 - `--skip-marketplace`: skip `codex plugin marketplace add`.
 - `--skip-plugin`: skip `codex plugin add`.
 - `--skip-sync`: skip custom agent and hook sync.
@@ -124,6 +144,9 @@ bash scripts/install-codex-plugin.sh --hooks --skip-marketplace --skip-plugin
 
 # Use a non-default Codex home
 bash scripts/install-codex-plugin.sh --hooks --codex-home "$HOME/.codex-dev"
+
+# Enable Obsidian autologging from Claude Code settings
+bash scripts/install-codex-plugin.sh --hooks --import-claude-obsidian
 ```
 
 ## Script-Only Install
@@ -226,8 +249,18 @@ Obsidian note capture uses these environment variables:
 
 - `CODEX_OBSIDIAN_VAULT_PATH`: preferred vault path.
 - `OBSIDIAN_VAULT_PATH`: fallback vault path.
+- `CODEX_OBSIDIAN_PROJECTS_FOLDER`: preferred vault-relative project folder.
+- `OBSIDIAN_PROJECTS_FOLDER`: fallback vault-relative project folder.
 
-If neither variable is set, Obsidian-specific writes are skipped.
+The installer can also write these values to:
+
+```text
+${CODEX_HOME:-$HOME/.codex}/agent-pack/obsidian.env
+```
+
+Hook scripts load that file before checking the environment. If neither the
+config file nor the environment provides a vault path, Obsidian-specific writes
+are skipped.
 
 ## Development Workflow
 

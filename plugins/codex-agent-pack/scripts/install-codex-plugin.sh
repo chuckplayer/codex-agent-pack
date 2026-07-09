@@ -20,6 +20,12 @@ Options:
   --skip-sync          Do not sync custom agents or hooks.
   --codex-bin PATH     Codex CLI executable. Default: codex.
   --codex-home PATH    Codex home for synced custom agents/hooks.
+  --obsidian-vault PATH
+                       Configure Obsidian autologging for installed hooks.
+  --obsidian-projects-folder PATH
+                       Vault-relative project folder. Default: Codex/Projects.
+  --import-claude-obsidian
+                       Import vault and project folder from ~/.claude/settings.json.
   --dry-run            Print commands without running them.
 
 Common install:
@@ -43,6 +49,9 @@ skip_marketplace=0
 skip_plugin=0
 skip_sync=0
 dry_run=0
+obsidian_vault=""
+obsidian_projects_folder=""
+import_claude_obsidian=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -90,6 +99,18 @@ while [[ $# -gt 0 ]]; do
     --codex-home)
       codex_home="${2:?Missing value for --codex-home}"
       shift 2
+      ;;
+    --obsidian-vault)
+      obsidian_vault="${2:?Missing value for --obsidian-vault}"
+      shift 2
+      ;;
+    --obsidian-projects-folder)
+      obsidian_projects_folder="${2:?Missing value for --obsidian-projects-folder}"
+      shift 2
+      ;;
+    --import-claude-obsidian)
+      import_claude_obsidian=1
+      shift
       ;;
     --dry-run)
       dry_run=1
@@ -228,6 +249,15 @@ if [[ "$skip_sync" -ne 1 ]]; then
   if [[ "$force" -eq 1 ]]; then
     sync_args+=(--force)
   fi
+  if [[ -n "$obsidian_vault" ]]; then
+    sync_args+=(--obsidian-vault "$obsidian_vault")
+  fi
+  if [[ -n "$obsidian_projects_folder" ]]; then
+    sync_args+=(--obsidian-projects-folder "$obsidian_projects_folder")
+  fi
+  if [[ "$import_claude_obsidian" -eq 1 ]]; then
+    sync_args+=(--import-claude-obsidian)
+  fi
   run_cmd "${sync_args[@]}"
 fi
 
@@ -241,6 +271,7 @@ Plugin ref:     $plugin_name@$marketplace_name
 Version:        $build_version
 Custom agents:  $(if [[ "$skip_sync" -ne 1 ]]; then echo "$codex_home/agents"; else echo "not synced"; fi)
 Hooks:          $(if [[ "$install_hooks" -eq 1 && "$skip_sync" -ne 1 ]]; then echo "$codex_home/hooks.json"; else echo "not installed"; fi)
+Obsidian:       $(if [[ "$skip_sync" -ne 1 && ( -n "$obsidian_vault" || "$import_claude_obsidian" -eq 1 ) ]]; then echo "$codex_home/agent-pack/obsidian.env"; else echo "not configured"; fi)
 
 Start a new Codex session so plugin skills and custom agents reload.
 EOF

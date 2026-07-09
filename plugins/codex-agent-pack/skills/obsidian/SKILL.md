@@ -1,6 +1,6 @@
 ---
 name: obsidian
-description: "Use Codex Obsidian workflows for captures, recaps, daily notes, briefs, and vault search when CODEX_OBSIDIAN_VAULT_PATH or OBSIDIAN_VAULT_PATH is configured."
+description: "Use Codex Obsidian workflows for captures, recaps, daily notes, briefs, and vault search when Codex Obsidian config or vault environment variables are configured."
 ---
 
 # Obsidian
@@ -8,9 +8,11 @@ description: "Use Codex Obsidian workflows for captures, recaps, daily notes, br
 Use this as the router for Obsidian-backed project memory.
 
 Vault resolution:
+- load `${CODEX_AGENT_PACK_OBSIDIAN_CONFIG}` or `${CODEX_HOME:-$HOME/.codex}/agent-pack/obsidian.env` when available,
 - prefer `CODEX_OBSIDIAN_VAULT_PATH`,
 - fall back to `OBSIDIAN_VAULT_PATH`,
 - prefer `CODEX_OBSIDIAN_PROJECTS_FOLDER`,
+- fall back to `OBSIDIAN_PROJECTS_FOLDER`,
 - default project notes to `Codex/Projects`.
 
 Choose the narrowest skill:

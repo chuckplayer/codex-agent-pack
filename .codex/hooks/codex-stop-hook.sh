@@ -1,6 +1,32 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" 2>/dev/null && pwd -P)"
+if [[ -z "$script_dir" ]]; then
+  script_dir="$(pwd)"
+fi
+
+config_helpers=(
+  "$script_dir/../scripts/obsidian-config.sh"
+  "$script_dir/../../scripts/obsidian-config.sh"
+)
+if [[ -n "${CODEX_AGENT_PACK_HOME:-}" ]]; then
+  config_helpers+=("$CODEX_AGENT_PACK_HOME/scripts/obsidian-config.sh")
+fi
+if [[ -n "${CODEX_HOME:-}" ]]; then
+  config_helpers+=("$CODEX_HOME/agent-pack/scripts/obsidian-config.sh")
+fi
+config_helpers+=("$HOME/.codex/agent-pack/scripts/obsidian-config.sh")
+
+for helper in "${config_helpers[@]}"; do
+  if [[ -f "$helper" ]]; then
+    # shellcheck source=scripts/obsidian-config.sh
+    source "$helper"
+    codex_agent_pack_load_obsidian_config "$script_dir/../obsidian.env" "$script_dir/../../obsidian.env" >/dev/null 2>&1 || true
+    break
+  fi
+done
+
 if [[ -z "${CODEX_OBSIDIAN_VAULT_PATH:-${OBSIDIAN_VAULT_PATH:-}}" ]]; then
   exit 0
 fi
@@ -8,10 +34,6 @@ fi
 root="$(git rev-parse --show-toplevel 2>/dev/null)"
 if [[ -z "$root" ]]; then
   root="$(pwd)"
-fi
-script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" 2>/dev/null && pwd -P)"
-if [[ -z "$script_dir" ]]; then
-  script_dir="$(pwd)"
 fi
 project="$(basename "$root")"
 branch="$(git -C "$root" branch --show-current 2>/dev/null || true)"

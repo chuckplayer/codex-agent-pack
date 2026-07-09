@@ -146,6 +146,7 @@ for script in \
   setup-codex-project.sh \
   sync-custom-agents.sh \
   test-codex-agent-pack.sh \
+  obsidian-config.sh \
   write-obsidian-note.sh; do
   if [[ ! -f "$pack_root/scripts/$script" ]]; then
     add_failure "Missing support script: scripts/$script"
@@ -215,6 +216,7 @@ else
     scripts/install-codex-plugin.sh \
     scripts/setup-codex-project.sh \
     scripts/sync-custom-agents.sh \
+    scripts/obsidian-config.sh \
     docs/INSTALL.md \
     hooks/global-hooks.json \
     hooks/hooks.json \
@@ -239,20 +241,33 @@ if [[ -f "$pack_root/scripts/sync-custom-agents.sh" && -f "$pack_root/.codex/hoo
   smoke_tmp="$(mktemp -d)"
   mkdir -p "$smoke_tmp/codex/agent-pack/hooks" "$smoke_tmp/codex/agent-pack/scripts"
 
-  if ! bash "$pack_root/scripts/sync-custom-agents.sh" --hooks --codex-home "$smoke_tmp/codex" >/dev/null 2>&1; then
+  mkdir -p "$smoke_tmp/vault"
+
+  if ! bash "$pack_root/scripts/sync-custom-agents.sh" --hooks --codex-home "$smoke_tmp/codex" --obsidian-vault "$smoke_tmp/vault" --obsidian-projects-folder "Codex/Projects" >/dev/null 2>&1; then
     add_failure "Hook support smoke: sync-custom-agents.sh --hooks failed"
   else
     for asset in \
       hooks/codex-user-prompt-hook.sh \
       hooks/codex-stop-hook.sh \
+      scripts/obsidian-config.sh \
       scripts/write-obsidian-note.sh; do
       if [[ ! -f "$smoke_tmp/codex/agent-pack/$asset" ]]; then
         add_failure "Hook support smoke missing asset: $asset"
       fi
     done
 
+    if [[ ! -f "$smoke_tmp/codex/agent-pack/obsidian.env" ]]; then
+      add_failure "Hook support smoke missing obsidian config: obsidian.env"
+    elif ! grep -Fq 'CODEX_OBSIDIAN_VAULT_PATH=' "$smoke_tmp/codex/agent-pack/obsidian.env"; then
+      add_failure "Hook support smoke obsidian config missing vault path"
+    fi
+
     if ! (cd "$smoke_tmp" && CODEX_HOME="$smoke_tmp/codex" bash "$smoke_tmp/codex/agent-pack/hooks/codex-stop-hook.sh" >/dev/null 2>&1); then
       add_failure "Hook support smoke: codex-stop-hook.sh failed outside pack root"
+    fi
+
+    if ! find "$smoke_tmp/vault/Codex/captures" -type f -name '*.md' 2>/dev/null | grep -q .; then
+      add_failure "Hook support smoke: codex-stop-hook.sh did not write Obsidian capture from config"
     fi
   fi
 fi

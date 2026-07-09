@@ -13,7 +13,7 @@ Run with Bash on macOS, Linux, or Windows with Git Bash:
 printf '%s\n' "<body>" | bash scripts/write-obsidian-note.sh --mode capture --project "<project>" --title "<title>"
 ```
 
-The scripts use `CODEX_OBSIDIAN_VAULT_PATH`, then `OBSIDIAN_VAULT_PATH`. They update both `Codex/captures/<timestamp>.md` and the project daily index.
+The scripts load `${CODEX_HOME:-$HOME/.codex}/agent-pack/obsidian.env` when available, then use `CODEX_OBSIDIAN_VAULT_PATH` or `OBSIDIAN_VAULT_PATH`. They update both `Codex/captures/<timestamp>.md` and the project daily index.
 
 Capture format:
 - title: one line,

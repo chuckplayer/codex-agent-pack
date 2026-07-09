@@ -7,12 +7,12 @@ description: "Search configured Codex Obsidian notes for prior decisions, recaps
 
 Use this skill when prior project memory may exist in Obsidian.
 
-Resolve the vault with `CODEX_OBSIDIAN_VAULT_PATH`, then `OBSIDIAN_VAULT_PATH`. If neither is set, report that Obsidian search is unavailable and continue with repository memory.
+Resolve the vault from Codex Agent Pack `obsidian.env` when available, then `CODEX_OBSIDIAN_VAULT_PATH`, then `OBSIDIAN_VAULT_PATH`. If neither is set, report that Obsidian search is unavailable and continue with repository memory.
 
 Search likely locations:
 - `Codex/captures`,
 - `Codex/Projects/<project-slug>`,
-- the folder from `CODEX_OBSIDIAN_PROJECTS_FOLDER` when set.
+- the folder from `CODEX_OBSIDIAN_PROJECTS_FOLDER` or `OBSIDIAN_PROJECTS_FOLDER` when set.
 
 Prefer exact searches for:
 - feature names,

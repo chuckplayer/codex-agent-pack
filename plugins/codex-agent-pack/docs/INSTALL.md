@@ -20,6 +20,20 @@ This runs the hybrid install flow:
 
 Start a new Codex session after installing.
 
+To enable Obsidian autologging from an existing Claude Code setup:
+
+```bash
+bash scripts/install-codex-plugin.sh --hooks --import-claude-obsidian
+```
+
+To configure it directly:
+
+```bash
+bash scripts/install-codex-plugin.sh --hooks \
+  --obsidian-vault "/absolute/path/to/your/vault" \
+  --obsidian-projects-folder "Codex/Projects"
+```
+
 ## Local Updates
 
 After changing skills, agents, hooks, docs, or scripts:
@@ -48,3 +62,9 @@ bash scripts/install-codex-agent-pack.sh --hooks
 ```
 
 Use `--force` only when replacing existing installed files is intentional.
+
+Obsidian autologging can be configured the same way:
+
+```bash
+bash scripts/install-codex-agent-pack.sh --hooks --import-claude-obsidian
+```

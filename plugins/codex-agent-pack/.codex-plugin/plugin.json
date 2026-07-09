@@ -1,6 +1,6 @@
 {
   "name": "codex-agent-pack",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.local-20260709-194424",
   "description": "Codex-native skills, custom-agent sync scripts, hooks, and project setup workflows.",
   "author": {
     "name": "Chuck Player",
