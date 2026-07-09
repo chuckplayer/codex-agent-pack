@@ -111,7 +111,7 @@ mkdir -p \
 copy_dir "$pack_root/.agents/skills" "$plugin_root/skills"
 copy_dir "$pack_root/.codex/agents" "$plugin_root/custom-agents"
 copy_dir "$pack_root/.codex/hooks" "$plugin_root/hooks"
-copy_file "$pack_root/.codex/hooks.json" "$plugin_root/hooks/hooks.json"
+copy_file "$pack_root/.codex/global-hooks.json" "$plugin_root/hooks/hooks.json"
 copy_file "$pack_root/.codex/global-hooks.json" "$plugin_root/hooks/global-hooks.json"
 copy_dir "$pack_root/scripts" "$plugin_root/scripts"
 copy_dir "$pack_root/docs" "$plugin_root/docs"

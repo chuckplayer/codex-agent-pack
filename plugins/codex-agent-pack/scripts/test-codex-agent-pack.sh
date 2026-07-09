@@ -37,7 +37,8 @@ done
 
 failures_file="$(mktemp)"
 warnings_file="$(mktemp)"
-trap 'rm -f "$failures_file" "$warnings_file"' EXIT
+smoke_tmp=""
+trap 'rm -f "$failures_file" "$warnings_file"; if [[ -n "$smoke_tmp" ]]; then rm -rf "$smoke_tmp"; fi' EXIT
 
 add_failure() {
   printf '%s\n' "$*" >> "$failures_file"
@@ -223,6 +224,37 @@ else
       add_failure "Plugin package missing asset: plugins/codex-agent-pack/$asset"
     fi
   done
+
+  if [[ -f "$plugin_root/hooks/hooks.json" ]]; then
+    if grep -Fq '$root/.codex/hooks' "$plugin_root/hooks/hooks.json"; then
+      add_failure "Plugin hooks config references project-local .codex hooks"
+    fi
+    if ! grep -Fq 'CODEX_AGENT_PACK_HOME' "$plugin_root/hooks/hooks.json"; then
+      add_failure "Plugin hooks config does not reference support-copy hook location"
+    fi
+  fi
+fi
+
+if [[ -f "$pack_root/scripts/sync-custom-agents.sh" && -f "$pack_root/.codex/hooks/codex-stop-hook.sh" ]]; then
+  smoke_tmp="$(mktemp -d)"
+  mkdir -p "$smoke_tmp/codex/agent-pack/hooks" "$smoke_tmp/codex/agent-pack/scripts"
+
+  if ! bash "$pack_root/scripts/sync-custom-agents.sh" --hooks --codex-home "$smoke_tmp/codex" >/dev/null 2>&1; then
+    add_failure "Hook support smoke: sync-custom-agents.sh --hooks failed"
+  else
+    for asset in \
+      hooks/codex-user-prompt-hook.sh \
+      hooks/codex-stop-hook.sh \
+      scripts/write-obsidian-note.sh; do
+      if [[ ! -f "$smoke_tmp/codex/agent-pack/$asset" ]]; then
+        add_failure "Hook support smoke missing asset: $asset"
+      fi
+    done
+
+    if ! (cd "$smoke_tmp" && CODEX_HOME="$smoke_tmp/codex" bash "$smoke_tmp/codex/agent-pack/hooks/codex-stop-hook.sh" >/dev/null 2>&1); then
+      add_failure "Hook support smoke: codex-stop-hook.sh failed outside pack root"
+    fi
+  fi
 fi
 
 if [[ ! -f "$marketplace" ]]; then

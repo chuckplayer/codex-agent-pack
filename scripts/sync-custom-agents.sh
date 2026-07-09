@@ -113,6 +113,21 @@ copy_path() {
   echo "[ok] installed: $destination"
 }
 
+copy_dir_children() {
+  local source_dir="$1"
+  local destination_dir="$2"
+  mkdir -p "$destination_dir"
+
+  if [[ ! -d "$source_dir" ]]; then
+    echo "[skip] missing source directory: $source_dir"
+    return 0
+  fi
+
+  while IFS= read -r -d '' item; do
+    copy_path "$item" "$destination_dir/$(basename "$item")"
+  done < <(find "$source_dir" -mindepth 1 -maxdepth 1 -print0)
+}
+
 if [[ -z "$source_dir" ]]; then
   source_dir="$(first_existing_dir "$pack_root/custom-agents" "$pack_root/.codex/agents" || true)"
 fi
@@ -150,11 +165,11 @@ if [[ "$install_hooks" -eq 1 ]]; then
   copy_path "$hooks_json_source" "$codex_home/hooks.json"
 
   if [[ -n "$hook_dir_source" ]]; then
-    copy_path "$hook_dir_source" "$support_home/hooks"
+    copy_dir_children "$hook_dir_source" "$support_home/hooks"
   fi
 
   if [[ -n "$scripts_source" ]]; then
-    copy_path "$scripts_source" "$support_home/scripts"
+    copy_dir_children "$scripts_source" "$support_home/scripts"
   fi
 
   for file in AGENTS.md PORTING-NOTES.md LICENSE; do
