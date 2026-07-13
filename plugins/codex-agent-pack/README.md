@@ -13,7 +13,7 @@ The recommended distribution path is a hybrid Codex plugin install:
 
 ## Contents
 
-- `24` Codex skills under `.agents/skills`.
+- `27` Codex skills under `.agents/skills`.
 - `18` Codex custom agents under `.codex/agents`.
 - Project-local hook config under `.codex/hooks.json`.
 - Optional user-level hook config under `.codex/global-hooks.json`.
@@ -53,16 +53,17 @@ This performs the full hybrid install:
 Start a new Codex session after installing so the plugin skills and custom
 agents are reloaded.
 
-To enable Obsidian autologging using an existing Claude Code Obsidian setup:
+To configure the Obsidian note scripts using an existing Claude Code Obsidian
+setup:
 
 ```bash
-bash scripts/install-codex-plugin.sh --hooks --import-claude-obsidian
+bash scripts/install-codex-plugin.sh --import-claude-obsidian
 ```
 
 Or configure the Codex pack directly:
 
 ```bash
-bash scripts/install-codex-plugin.sh --hooks \
+bash scripts/install-codex-plugin.sh \
   --obsidian-vault "/absolute/path/to/your/vault" \
   --obsidian-projects-folder "Codex/Projects"
 ```
@@ -119,8 +120,7 @@ Common options:
 - `--dry-run`: print commands without running them.
 - `--codex-bin <path>`: use a specific Codex CLI executable.
 - `--codex-home <path>`: sync agents and hooks to a non-default Codex home.
-- `--obsidian-vault <path>`: configure Obsidian autologging for installed
-  hooks.
+- `--obsidian-vault <path>`: configure Obsidian note scripts and skills.
 - `--obsidian-projects-folder <path>`: set the vault-relative project folder
   for Obsidian notes. Default is `Codex/Projects`.
 - `--import-claude-obsidian`: import `OBSIDIAN_VAULT_PATH` and
@@ -145,8 +145,8 @@ bash scripts/install-codex-plugin.sh --hooks --skip-marketplace --skip-plugin
 # Use a non-default Codex home
 bash scripts/install-codex-plugin.sh --hooks --codex-home "$HOME/.codex-dev"
 
-# Enable Obsidian autologging from Claude Code settings
-bash scripts/install-codex-plugin.sh --hooks --import-claude-obsidian
+# Configure Obsidian note scripts from Claude Code settings
+bash scripts/install-codex-plugin.sh --import-claude-obsidian
 ```
 
 ## Script-Only Install
@@ -222,6 +222,10 @@ Common workflows:
 - `review-pr`: review a pull request or local changes.
 - `scaffold`: create a new project or feature structure.
 - `debug`: investigate a failing behavior or test.
+- `devops`: route GitHub or Azure DevOps issue, PR, and work-item requests.
+- `devops-github`: handle one-off GitHub PR and issue operations via `gh`.
+- `devops-azure`: handle one-off Azure DevOps work-item and PR operations via
+  `az`.
 - `hotfix`: make a focused urgent fix.
 - `repo-map`: map an unfamiliar repository.
 - `onboard`: build initial repository context.
@@ -234,7 +238,7 @@ The orchestration skills may call custom agents such as `tech-lead`,
 `python-engineer`, `csharp-engineer`, and `database-engineer` when those roles
 fit the task.
 
-## Hooks and Obsidian
+## Hooks
 
 Hooks are optional. With `--hooks`, the installer writes:
 
@@ -242,8 +246,10 @@ Hooks are optional. With `--hooks`, the installer writes:
 ${CODEX_HOME:-$HOME/.codex}/hooks.json
 ```
 
-The hook scripts are best-effort. They exit successfully when journaling or
-Obsidian configuration is unavailable.
+The hook script records prompt context for local journaling. It is best-effort
+and exits successfully when journaling is unavailable.
+
+## Obsidian
 
 Obsidian note capture uses these environment variables:
 
@@ -258,9 +264,27 @@ The installer can also write these values to:
 ${CODEX_HOME:-$HOME/.codex}/agent-pack/obsidian.env
 ```
 
-Hook scripts load that file before checking the environment. If neither the
-config file nor the environment provides a vault path, Obsidian-specific writes
-are skipped.
+The explicit Obsidian skills and scripts load that file before checking the
+environment. If neither the config file nor the environment provides a vault
+path, Obsidian-specific writes are skipped.
+
+## DevOps Target Configuration
+
+The DevOps skills can persist GitHub and Azure DevOps target variables in a
+Codex Agent Pack env file:
+
+```text
+${CODEX_AGENT_PACK_ENV_FILE:-${CODEX_HOME:-$HOME/.codex}/agent-pack/env.sh}
+```
+
+Use the helper script after confirming values:
+
+```bash
+bash scripts/set-env.sh GITHUB_ORG=<org> GITHUB_REPOS=<repo-a,repo-b>
+bash scripts/set-env.sh AZURE_DEVOPS_ORG=<org> AZURE_DEVOPS_PROJECTS=<ProjectA,ProjectB>
+```
+
+The DevOps skills load that file before checking the current environment.
 
 ## Development Workflow
 

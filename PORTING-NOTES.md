@@ -5,7 +5,7 @@ Source: `C:\Users\playechu\source\repos\claude-agent-pack`
 
 The pack has been converted to Codex-native surfaces:
 
-- 24 reusable skills under `.agents/skills`, including a sync helper for
+- 27 reusable skills under `.agents/skills`, including a sync helper for
   installing custom agents from the plugin package.
 - 18 custom Codex agents under `.codex/agents`.
 - Project lifecycle hooks under `.codex/hooks.json` and `.codex/hooks`.
@@ -20,10 +20,14 @@ The pack has been converted to Codex-native surfaces:
 - Workflows no longer assume isolated worktrees. Skills use the current checkout
   unless the user or Codex surface explicitly creates a separate worktree.
 - Setup, validation, and Obsidian writes use deterministic support scripts.
-- Obsidian integration uses `CODEX_OBSIDIAN_VAULT_PATH`, falling back to
-  `OBSIDIAN_VAULT_PATH`, and writes under `Codex/` paths by default.
-- Hook scripts are best-effort and exit successfully when journaling or vault
-  configuration is unavailable.
+- Obsidian integration is explicit through skills and scripts. It uses
+  `CODEX_OBSIDIAN_VAULT_PATH`, falls back to `OBSIDIAN_VAULT_PATH`, and writes
+  under `Codex/` paths by default.
+- DevOps skill target persistence uses
+  `${CODEX_AGENT_PACK_ENV_FILE:-${CODEX_HOME:-$HOME/.codex}/agent-pack/env.sh}`
+  via `scripts/set-env.sh` instead of Claude settings injection.
+- Hook scripts are best-effort and exit successfully when prompt journaling is
+  unavailable. Lifecycle hooks do not write Obsidian notes.
 - The plugin package carries skills and support files. Custom agents and global
   hooks are installed with `scripts/sync-custom-agents.sh` because those surfaces
   are not represented as supported plugin manifest fields.

@@ -10,7 +10,7 @@ Installs Codex custom agents from this pack into:
 
 Use --hooks to also install global hooks.json and the hook support files needed
 by those hooks. Use --force to replace existing installed files.
-Use --obsidian-vault to configure best-effort Obsidian autologging for hooks.
+Use --obsidian-vault to configure manual Obsidian note scripts and skills.
 Use --import-claude-obsidian to read OBSIDIAN_VAULT_PATH and
 OBSIDIAN_PROJECTS_FOLDER from ~/.claude/settings.json.
 USAGE
@@ -226,7 +226,7 @@ if [[ -n "$obsidian_vault" ]]; then
   echo "[ok] obsidian config: $support_home/obsidian.env"
   obsidian_configured=1
 elif [[ "$import_claude_obsidian" -eq 1 ]]; then
-  echo "[--] Claude Obsidian config not found; Obsidian autologging not configured."
+  echo "[--] Claude Obsidian config not found; Obsidian config not updated."
 fi
 
 cat <<EOF

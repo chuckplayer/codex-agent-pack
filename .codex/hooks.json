@@ -12,19 +12,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c 'root=$(git rev-parse --show-toplevel 2>/dev/null); if [ -z \"$root\" ]; then root=$(pwd); fi; hook=\"$root/.codex/hooks/codex-stop-hook.sh\"; if [ -f \"$hook\" ]; then bash \"$hook\"; fi'",
-            "commandWindows": "\"C:\\Program Files\\Git\\usr\\bin\\bash.exe\" -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null); if [ -z \"$root\" ]; then root=$(pwd); fi; hook=\"$root/.codex/hooks/codex-stop-hook.sh\"; if [ -f \"$hook\" ]; then bash \"$hook\"; fi'",
-            "timeout": 30,
-            "statusMessage": "Recording Codex session update"
-          }
-        ]
-      }
     ]
   }
 }

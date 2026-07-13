@@ -14,7 +14,7 @@ Installs this pack for the current user:
 Use --force to replace existing installed files.
 Use --hooks to install the global hooks.json. This refuses to replace an
 existing hooks.json unless --force is also supplied.
-Use --obsidian-vault to configure best-effort Obsidian autologging for hooks.
+Use --obsidian-vault to configure manual Obsidian note scripts and skills.
 Use --import-claude-obsidian to read OBSIDIAN_VAULT_PATH and
 OBSIDIAN_PROJECTS_FOLDER from ~/.claude/settings.json.
 USAGE
@@ -196,7 +196,7 @@ if [[ -n "$obsidian_vault" ]]; then
   echo "[ok] obsidian config: $agent_pack_home/obsidian.env"
   obsidian_configured=1
 elif [[ "$import_claude_obsidian" -eq 1 ]]; then
-  echo "[--] Claude Obsidian config not found; Obsidian autologging not configured."
+  echo "[--] Claude Obsidian config not found; Obsidian config not updated."
 fi
 
 if [[ "$install_hooks" -eq 1 ]]; then

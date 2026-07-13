@@ -21,7 +21,7 @@ Options:
   --codex-bin PATH     Codex CLI executable. Default: codex.
   --codex-home PATH    Codex home for synced custom agents/hooks.
   --obsidian-vault PATH
-                       Configure Obsidian autologging for installed hooks.
+                       Configure manual Obsidian note scripts and skills.
   --obsidian-projects-folder PATH
                        Vault-relative project folder. Default: Codex/Projects.
   --import-claude-obsidian

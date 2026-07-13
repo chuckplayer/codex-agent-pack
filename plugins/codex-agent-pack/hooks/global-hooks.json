@@ -12,19 +12,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c 'pack=\"${CODEX_AGENT_PACK_HOME:-${CODEX_HOME:-$HOME/.codex}/agent-pack}\"; hook=\"$pack/hooks/codex-stop-hook.sh\"; if [ -f \"$hook\" ]; then bash \"$hook\"; fi'",
-            "commandWindows": "\"C:\\Program Files\\Git\\usr\\bin\\bash.exe\" -lc 'pack=\"${CODEX_AGENT_PACK_HOME:-${CODEX_HOME:-$HOME/.codex}/agent-pack}\"; hook=\"$pack/hooks/codex-stop-hook.sh\"; if [ -f \"$hook\" ]; then bash \"$hook\"; fi'",
-            "timeout": 30,
-            "statusMessage": "Recording Codex session update"
-          }
-        ]
-      }
     ]
   }
 }
